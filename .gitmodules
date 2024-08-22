@@ -1,0 +1,9 @@
+[submodule "boards.d"]
+	path = boards.d
+	url = ./
+[submodule "KAMP"]
+	path = KAMP
+	url = https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging
+[submodule "global.d"]
+	path = global.d
+	url = ./
