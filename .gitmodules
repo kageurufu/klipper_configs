@@ -1,0 +1,11 @@
+[submodule "boards.d"]
+	path = boards.d
+	url = ./
+	branch = board-definitions
+[submodule "global.d"]
+	path = global.d
+	url = ./
+	branch = global-config
+[submodule "KAMP"]
+	path = KAMP
+	url = https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging

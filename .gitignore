@@ -1,0 +1,6 @@
+*.bkp
+*.bak
+/config_backups/*
+moonraker-obico.cfg
+timelapse.cfg
+user_variables.cfg
