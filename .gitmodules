@@ -1,0 +1,18 @@
+[submodule "board_definitions"]
+	path = board_definitions
+	url = ./
+	branch = board-definitions
+
+[submodule "global_config"]
+	path = global_config
+	url = ./
+	branch = global-config
+
+[submodule "printer/leda"]
+	path = printer/leda
+	url = ./
+	branch = printer/leda
+[submodule "printer/ganymede"]
+	path = printer/ganymede
+	url = ./
+	branch = printer/ganymede
