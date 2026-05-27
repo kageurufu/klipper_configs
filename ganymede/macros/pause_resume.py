@@ -11,11 +11,11 @@ def save_status(k: Kalico):
 
 def restore_status(k: Kalico):
     if k.status.heater_bed.target != resume.vars.bed_target:
-        k.gcode.m117("🔥 Restoring bed to {int(resume.vars.bed_target)}C")
+        k.gcode.display(f"🔥 Restoring bed to {int(resume.vars.bed_target)}C")
         k.heaters.set_temperature("heater_bed", resume.vars.bed_target, wait=True)
 
     if k.status.extruder.target != resume.vars.extruder_target:
-        k.gcode.m117("🔥 Restoring extruder to {int(resume.vars.extruder_target)}C")
+        k.gcode.display(f"🔥 Restoring extruder to {int(resume.vars.extruder_target)}C")
         k.heaters.set_temperature("extruder", resume.vars.extruder_target, wait=True)
 
     k.fans.set_speed("fan", k.status.fan.speed)
@@ -34,14 +34,14 @@ def pause(k: Kalico):
 
     if k.status.extruder.can_extrude:
         k.move(de=-1, speed=35)
-    k.gcode.park_toolhead(location="rear")
+    k.gcode.park_toolhead(location="REAR")
 
 
 @gcode_macro
 def m600(k: Kalico, next_color: str = "unknown"):
     k.gcode.push_notification(
         title="Ganymede Paused",
-        body="Filament change required, next color is {next_color}",
+        body=f"Filament change required, next color is {next_color}",
     )
 
     save_status(k)
@@ -50,11 +50,11 @@ def m600(k: Kalico, next_color: str = "unknown"):
     if k.status.extruder.can_extrude:
         k.move(de=-1, speed=35)
 
-    k.gcode.park_toolhead(location="front")
+    k.gcode.park_toolhead(location="FRONT")
 
 
 @gcode_macro(rename_existing="BASE_RESUME")
 def resume(k: Kalico):
     restore_status(k)
     k.gcode.base_resume()
-    k.gcode.m117()
+    k.gcode.clear_display()

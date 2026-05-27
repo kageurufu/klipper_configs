@@ -4,3 +4,6 @@
 moonraker-obico.cfg
 timelapse.cfg
 user_variables.cfg
+__pycache__/
+*.pyc
+*.swp

@@ -1,9 +1,7 @@
 from . import (
+    printer,
+    boards,
+    pitb2,
+    config,
     macros,
-    startup,
-)
-
-__all__ = (
-    "macros",
-    "startup",
 )

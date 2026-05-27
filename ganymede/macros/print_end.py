@@ -28,9 +28,7 @@ def print_end(k: Kalico):
     # Park the toolhead
     if k.status.toolhead.position.z < k.status.toolhead.axis_maximum.z - 10:
         k.move(
-            z=min(
-                k.status.toolhead.position.z + 5, k.status.toolhead.axis_maximum.z - 10
-            ),
+            z=min(k.status.toolhead.position.z + 5, k.status.toolhead.axis_maximum.z - 10),
             speed=90,
         )
     k.move(
@@ -39,8 +37,6 @@ def print_end(k: Kalico):
         speed=300,
     )
 
-    k.gcode.push_notification(
-        title="Print Complete", body=f"{k.status.virtual_sdcard.file_path}"
-    )
+    k.gcode.push_notification(title="Print Complete", body=f"{k.status.virtual_sdcard.file_path}")
 
     air_filter_stop(k, delay=300)

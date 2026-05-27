@@ -1,5 +1,8 @@
 from kalico import Kalico, gcode_macro
 
+from .squiggly_purge import squiggly_purge
+from .mpc import mpc_set_material
+
 
 EXTRUDER_LOW = 150
 
@@ -12,19 +15,19 @@ def print_start(
     bed: float = 0.0,
     chamber: float = 0.0,
 ):
-    k.gcode.mpc_set_material(material=material)
-    k.gcode.g90()
+    mpc_set_material(k, material=material)
     k.heaters.set_temperature("extruder", EXTRUDER_LOW)
     k.heaters.set_temperature("heater_bed", bed)
 
-    k.gcode.set_gcode_offset(z=0)
-    k.gcode.bed_mesh_clear()
+    k.gcode.absolute_movement()
+    k.move.set_gcode_offset(z=0)
 
+    k.gcode.bed_mesh_clear()
     k.gcode.g28()
     k.move(x=150, y=150, z=20, speed=200)
 
     if bed:
-        k.gcode.m117(f"🔥 Waiting for bed {int(bed)}C")
+        k.gcode.display(f"🔥 Waiting for bed {int(bed)}C")
         k.heaters.temperature_wait("heater_bed", min_temp=bed - 1)
 
     if chamber:
@@ -34,31 +37,29 @@ def print_start(
         k.fans.set_speed("nevermore", 0.6)
 
     if abs(EXTRUDER_LOW - k.status.extruder.temperature) > 5:
-        k.gcode.m117(f"🔥 Waiting for extruder {EXTRUDER_LOW}C")
-        k.heaters.temperature_wait(
-            "extruder", min_temp=EXTRUDER_LOW - 5, max_temp=EXTRUDER_LOW + 5
-        )
+        k.gcode.display(f"🔥 Waiting for extruder {EXTRUDER_LOW}C")
+        k.heaters.temperature_wait("extruder", min_temp=EXTRUDER_LOW - 5, max_temp=EXTRUDER_LOW + 5)
 
     k.gcode.g28("Z", method="contact", calibrate=1)
 
-    k.gcode.m117("🎚️ Quad Gantry Level")
+    k.gcode.display("🎚️ Quad Gantry Level")
     k.gcode.quad_gantry_level()
 
-    k.gcode.m117("🎚️ Adaptive Meshing")
-    k.gcode.bed_mesh_calibrate(adaptive=1)
+    k.gcode.display("🎚️ Adaptive Meshing")
+    k.gcode.bed_mesh_calibrate(adaptive=True)
 
-    k.gcode.g28("Z", method="contact", calibrate=0)
+    k.gcode.g28("Z", method="contact", calibrate=False)
 
-    k.gcode.m117(f"🔥 Waiting for extruder {int(extruder)}C")
+    k.gcode.display(f"🔥 Waiting for extruder {int(extruder)}C")
     k.heaters.set_temperature("extruder", extruder, wait=True)
 
-    k.gcode.m117("💩 Purging")
-    k.gcode.line_purge()
+    k.gcode.display("💩 Purging")
+    squiggly_purge(k)
 
-    k.gcode.m117("🏁 Print Starting")
-    k.timer(10.0, lambda k, _: k.gcode.m117())
+    k.gcode.display("🏁 Print Starting")
+    k.timer(10.0, lambda k, _: k.gcode.clear_display())
 
-    k.gcode.m83()
+    k.gcode.relative_extrusion()
     k.gcode.g92(e=0)
     k.move.set_speed(200)
 
@@ -87,6 +88,6 @@ def preheat_chamber(
     if chamber:
         previous_speed = k.status["fan_generic nevermore"].speed
         k.fans.set_speed("nevermore", 1.0)
-        k.gcode.m117("🔥 Waiting for chamber {int(chamber)}C")
+        k.gcode.display(f"🔥 Waiting for chamber {int(chamber)}C")
         k.heaters.temperature_wait("temperature_sensor chamber", min_temp=chamber)
         k.fans.set_speed("nevermore", previous_speed)

@@ -1,0 +1,21 @@
+from kalico import config
+
+config(
+    "quad_gantry_level",
+    gantry_corners="""
+		-60,-10
+		360,370
+    """,
+    points="""
+		25,25
+		25,255
+		275,255
+		275,25
+    """,
+    speed=300,
+    adaptive_horizontal_move_z=True,
+    horizontal_move_z=10,
+    retries=5,
+    retry_tolerance=0.01,
+    max_adjust=10,
+)

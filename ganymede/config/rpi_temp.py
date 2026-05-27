@@ -1,0 +1,10 @@
+from kalico import config
+
+
+config(
+    "temperature_sensor",
+    "rpi",
+    sensor_type="temperature_host",
+    min_temp="-40",
+    max_temp="85",
+)

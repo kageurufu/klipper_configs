@@ -1,0 +1,118 @@
+from kalico import config
+import os.path
+
+if not os.path.exists("/dev/serial/by-id/usb-Kalico_stm32h723xx_ouroboros-if00"):
+    raise Exception("Ouroboros is missing")
+
+config("mcu", serial="/dev/serial/by-id/usb-Kalico_stm32h723xx_ouroboros-if00")
+
+config.include("boards.d/isiks-tech/ouroboros.cfg")
+config("board_pins", "isiks-tech_ouroboros", mcu="mcu")
+
+
+config("temperature_sensor", "Ouroboros", sensor_type="temperature_mcu", sensor_mcu="mcu")
+config("temperature_sensor", "TMC1_MOS_Temp", sensor_type="Generic 3950", sensor_pin="PC4", pullup_resistor=4700)
+
+config("temperature_sensor", "TMC2_MOS_Temp", sensor_type="Generic 3950", sensor_pin="PC5", pullup_resistor=4700)
+
+AB_STEPPERS = dict(
+    rotation_distance=40,
+    microsteps=2,  # 8
+    full_steps_per_rotation=4096,  # 256
+)
+config(
+    "stepper_x",
+    step_pin="PD4",
+    dir_pin="!PD3",
+    enable_pin="PD6",
+    endstop_pin="toolhead:XES",
+    # endstop_pin='^PD7',
+    **AB_STEPPERS,
+)
+
+config(
+    "stepper_y",
+    step_pin="PC12",
+    dir_pin="!PC11",
+    enable_pin="PD1",
+    endstop_pin="^PD7",  # '^PB3'
+    **AB_STEPPERS,
+)
+
+config(
+    "tmc4671",
+    "stepper_x",
+    # SPI
+    cs_pin="PD0",
+    spi_bus="spi2",
+    spi_speed=2000000,
+    current_scale_ma_lsb=1.272,
+    # TMC4671 Settings - Leave As-Is or Refer to Config Reference Page for More Info
+    foc_pwm_sv=0,
+    foc_adc_i_ux_select=0,
+    foc_adc_i_v_select=2,
+    foc_adc_i_wy_select=1,
+    foc_phi_e_selection=3,
+    foc_position_selection=9,
+    foc_velocity_selection=9,
+    # Motor Info
+    foc_motor_type=2,
+    foc_n_pole_pairs=50,
+    run_current=3.5,
+    flux_current=0.02,
+    foc_abn_decoder_ppr=4000,
+    foc_abn_direction=1,
+    # PID
+    foc_pid_flux_p=3.07,  # 17.1
+    foc_pid_flux_i=0.015,  # 0.067
+    foc_pid_torque_p=3.07,  # 17.1
+    foc_pid_torque_i=0.015,  # 0.067
+    foc_pid_velocity_p=1.0,  # 1.07063
+    foc_pid_velocity_i=0.0,  # 0.00498
+    foc_pid_position_p=1.0,  # 1.27522
+    foc_pid_position_i=0.0,  # 0.00125
+    # Biquad Filter
+    biquad_flux_frequency=300,
+    biquad_torque_frequency=1200,
+    biquad_velocity_frequency=0,
+    biquad_position_frequency=0,
+)
+
+config(
+    "tmc4671",
+    "stepper_y",
+    # SPI
+    cs_pin="PD2",
+    spi_bus="spi2",
+    spi_speed=2000000,
+    current_scale_ma_lsb=1.272,
+    # TMC4671 Settings - Leave As-Is or Refer to Config Reference Page for More Info
+    foc_pwm_sv=0,
+    foc_adc_i_ux_select=0,
+    foc_adc_i_v_select=2,
+    foc_adc_i_wy_select=1,
+    foc_phi_e_selection=3,
+    foc_position_selection=9,
+    foc_velocity_selection=9,
+    # Motor Info
+    foc_motor_type=2,
+    foc_n_pole_pairs=50,
+    run_current=3.5,
+    flux_current=0.02,
+    foc_abn_decoder_ppr=4000,
+    foc_abn_direction=1,
+    # PID
+    foc_pid_flux_p=3.07,  # 17.1
+    foc_pid_flux_i=0.015,  # 0.067
+    foc_pid_torque_p=3.07,  # 17.1
+    foc_pid_torque_i=0.015,  # 0.067
+    foc_pid_velocity_p=1.0,  # 1.07063
+    foc_pid_velocity_i=0.0,  # 0.00498
+    foc_pid_position_p=1.0,  # 1.27522
+    foc_pid_position_i=0.0,  # 0.00125
+    # Biquad Filter
+    biquad_flux_frequency=300,
+    biquad_torque_frequency=1200,
+    biquad_velocity_frequency=0,
+    biquad_position_frequency=0,
+)
